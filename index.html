@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1c1929">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>¿Quién es más probable?</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bg-shapes" aria-hidden="true">
+    <span class="shape s1"></span>
+    <span class="shape s2"></span>
+    <span class="shape s3"></span>
+    <span class="shape s4"></span>
+    <span class="shape s5"></span>
+  </div>
+  <div id="confetti" class="confetti" aria-hidden="true"></div>
+
+  <main id="app">
+
+    <!-- PANTALLA 1: JUGADORES -->
+    <section id="screen-setup" class="screen active" aria-label="Jugadores">
+      <header class="hero">
+        <div class="badge" aria-hidden="true">👀</div>
+        <h1 class="title">
+          <span class="line l1">¿Quién es</span>
+          <span class="line l2 marker">más probable?</span>
+        </h1>
+        <p class="subtitle">Agrega a los jugadores. Mínimo 2. Cero piedad.</p>
+      </header>
+
+      <div id="add-row" class="add-row">
+        <input id="player-input" type="text" maxlength="16" autocomplete="off" autocorrect="off" enterkeyhint="done" placeholder="Nombre del jugador" aria-label="Nombre del jugador">
+        <button id="btn-add" class="btn btn-add" type="button" aria-label="Agregar jugador">+</button>
+      </div>
+      <p id="setup-hint" class="hint" role="status"></p>
+
+      <ul id="player-list" class="player-list" aria-label="Lista de jugadores"></ul>
+
+      <div class="bottom-bar">
+        <button id="btn-continue" class="btn btn-primary" type="button" disabled>Continuar →</button>
+      </div>
+    </section>
+
+    <!-- PANTALLA 2: MODOS -->
+    <section id="screen-modes" class="screen" aria-label="Modos de juego">
+      <button class="btn-back" type="button" data-action="back">← Jugadores</button>
+      <header class="hero small">
+        <h2 class="title-sm">Elige tu <span class="accent">modo</span></h2>
+        <p class="subtitle">¿Qué tan lejos quieren llegar esta noche?</p>
+      </header>
+
+      <div class="mode-list">
+        <button class="mode-card" type="button" data-mode="normal" style="--c:#5ea9e8">
+          <span class="mode-emoji" aria-hidden="true">🎮</span>
+          <span class="mode-text">
+            <span class="mode-name">Normal</span>
+            <span class="mode-desc">Tryhards, rageo y gym bros</span>
+          </span>
+        </button>
+        <button class="mode-card" type="button" data-mode="incomodas" style="--c:#f4be4b">
+          <span class="mode-emoji" aria-hidden="true">😳</span>
+          <span class="mode-text">
+            <span class="mode-name">Incómodas / Graciosas</span>
+            <span class="mode-desc">Traiciones, deudas y simps</span>
+          </span>
+        </button>
+        <button class="mode-card" type="button" data-mode="hot" style="--c:#ef5b6b">
+          <span class="mode-emoji" aria-hidden="true">🌶️</span>
+          <span class="mode-text">
+            <span class="mode-name">Hot +18</span>
+            <span class="mode-desc">Fiesta, tensión y secretos</span>
+          </span>
+        </button>
+      </div>
+    </section>
+
+    <!-- PANTALLA 3: JUEGO -->
+    <section id="screen-game" class="screen" aria-label="Juego">
+      <div class="game-top">
+        <button class="btn-back" type="button" data-action="back">← Modos</button>
+        <span id="mode-badge" class="mode-badge">Normal</span>
+        <span id="round-counter" class="round-counter">1 / 40</span>
+      </div>
+
+      <div id="question-card" class="question-card">
+        <p class="q-prefix">¿Quién es más probable que…</p>
+        <p id="question-text" class="q-text"></p>
+      </div>
+
+      <!-- Panel de votación por turnos (anónima) -->
+      <div id="vote-panel" class="panel">
+        <div id="turn-card" class="turn-card">
+          <p id="turn-label" class="turn-label">Le toca votar a</p>
+          <p id="turn-name" class="turn-name">Jugador</p>
+        </div>
+        <div id="vote-counter" class="vote-counter" role="status">Votos: 0 / 2</div>
+        <div id="vote-progress" class="vote-progress" aria-hidden="true">
+          <span id="vote-progress-fill" class="vote-fill"></span>
+        </div>
+        <p class="vote-label">Toca al que crees que es. Los votos son anónimos 🤫</p>
+        <div id="vote-grid" class="vote-grid"></div>
+      </div>
+
+      <!-- Panel de resultado de la ronda -->
+      <div id="result-panel" class="panel" hidden>
+        <div id="result-card" class="result-card">
+          <p id="result-title" class="result-title">🏆 Ganó la ronda</p>
+          <p id="result-names" class="result-names"></p>
+          <p id="result-sub" class="result-sub"></p>
+        </div>
+        <ul id="result-list" class="rank-list" aria-label="Votos de la ronda"></ul>
+      </div>
+
+      <div class="sticky-action">
+        <button id="btn-result" class="btn btn-primary" type="button" hidden>Ver Resultado 👀</button>
+        <button id="btn-next" class="btn btn-primary" type="button" hidden>Siguiente Pregunta →</button>
+      </div>
+    </section>
+
+    <!-- PANTALLA 4: FINAL -->
+    <section id="screen-final" class="screen" aria-label="Final de la partida">
+      <header class="final-head">
+        <div class="final-crown" aria-hidden="true">👑</div>
+        <p id="final-kicker" class="final-kicker">El más votado de la noche</p>
+        <h2 id="final-name" class="final-name"></h2>
+        <p id="final-votes" class="final-votes"></p>
+      </header>
+
+      <p class="final-roast">JAJA XD TODOS TE ODIAN</p>
+
+      <ul id="final-list" class="rank-list" aria-label="Ranking final"></ul>
+
+      <div class="sticky-action">
+        <button id="btn-replay" class="btn btn-primary" type="button">Jugar de nuevo 🔁</button>
+        <button id="btn-final-modes" class="btn btn-ghost" type="button">Cambiar modo</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- CONFIRMACIÓN +18 -->
+  <div id="confirm-modal" class="modal" hidden>
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+      <div class="modal-emoji" aria-hidden="true">🌶️</div>
+      <h3 id="confirm-title">Modo Hot +18</h3>
+      <p>Este modo es solo para mayores de 18 años. Preguntas picantes y sugerentes, pero sin pasarse.</p>
+      <button id="confirm-yes" class="btn btn-primary" type="button">Tengo +18, dale</button>
+      <button id="confirm-no" class="btn btn-ghost" type="button">Volver</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
